@@ -1,6 +1,6 @@
-package com.alpha_and_gec.aberrant_abominations.common.entityclasses;
+package com.alpha_and_gec.aberrant_abominations.inits.entity.common;
 
-import com.alpha_and_gec.aberrant_abominations.inits.entities.CustomEntities;
+import com.alpha_and_gec.aberrant_abominations.inits.entity.HybridEntities;
 import software.bernie.geckolib3.core.IAnimatable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -34,6 +34,10 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     private int remainingPersistentAngerTime;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+    public boolean canBreatheUnderwater() {
+        return true;
+    }
+
     public MajundosteusEntity(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.maxUpStep = 1.0f;
@@ -41,9 +45,9 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.ARMOR, 5.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 6.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D);
     }
@@ -51,12 +55,15 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new TryFindWaterGoal(this));
-        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(1, new TryFindWaterGoal(this));
+        this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.1));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(8, (new HurtByTargetGoal(this)));
-        this.targetSelector.addGoal(9, new ResetUniversalAngerTargetGoal<>(this, true));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        //this.goalSelector.addGoal(4, new EatBlockGoal(this, 1.1));
+        this.targetSelector.addGoal(0, (new HurtByTargetGoal(this)));
+        this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
     }
     //TODO: figure out how goal priority works
     //TODO: make it so that majundost tries to find water
@@ -65,7 +72,7 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return CustomEntities.MAJUNDOSTEUS.get().create(serverLevel);
+        return HybridEntities.MAJUNDOSTEUS.get().create(serverLevel);
     }
 
     @Override
@@ -99,7 +106,7 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (!event.isMoving()) {
+        if (!event.isMoving()||this.isDescending()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.idle", true));
             return PlayState.CONTINUE;
         } else if (this.isInWater() && event.isMoving()) {

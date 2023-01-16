@@ -10,7 +10,7 @@
 						"vector": ["10+Math.cos((query.anim_time+0.3)*720)*3", 0, 0]
 					},
 					"position": {
-						"vector": [0, "Math.cos((query.anim_time)*720)*2", 0]
+						"vector": [0, "Math.cos((query.anim_time)*720)*1", 0]
 					}
 				},
 				"neck": {
@@ -20,22 +20,22 @@
 				},
 				"skull": {
 					"rotation": {
-						"vector": ["15+Math.cos((query.anim_time)*720)*-5", 0, 0]
+						"vector": ["15+Math.cos((query.anim_time)*720)*-2", 0, 0]
 					}
 				},
 				"tail1": {
 					"rotation": {
-						"vector": ["-15+Math.cos((query.anim_time-0.2)*720)*10", "Math.cos((query.anim_time-0.2)*360)*10", 0]
+						"vector": ["-15+Math.cos((query.anim_time-0.2)*720)*5", "Math.cos((query.anim_time-0.2)*360)*10", 0]
 					}
 				},
 				"tail2": {
 					"rotation": {
-						"vector": ["-10+Math.cos((query.anim_time-0.3)*720)*10", "Math.cos((query.anim_time-0.4)*360)*10", 0]
+						"vector": ["-10+Math.cos((query.anim_time-0.3)*720)*7", "Math.cos((query.anim_time-0.4)*360)*15", 0]
 					}
 				},
 				"armscore": {
 					"rotation": {
-						"vector": ["50+Math.cos((query.anim_time-0.1)*720)*10", 0, 0]
+						"vector": ["50+Math.cos((query.anim_time-0.1)*720)*5", 0, 0]
 					}
 				},
 				"leftarm": {
@@ -106,22 +106,22 @@
 				},
 				"skull": {
 					"rotation": {
-						"vector": ["15+Math.cos((query.anim_time)*360)*-3", 0, 0]
+						"vector": ["15+Math.cos((query.anim_time)*360)*-1", 0, 0]
 					}
 				},
 				"tail1": {
 					"rotation": {
-						"vector": ["-15+Math.cos((query.anim_time-0.3)*360)*3", "Math.cos((query.anim_time-0.3)*180)*3", 0]
+						"vector": ["-15+Math.cos((query.anim_time-0.2)*360)*3", "Math.cos((query.anim_time-0.2)*180)*3", 0]
 					}
 				},
 				"tail2": {
 					"rotation": {
-						"vector": ["-10+Math.cos((query.anim_time-0.5)*360)*3", "Math.cos((query.anim_time-0.5)*180)*3", 0]
+						"vector": ["-10+Math.cos((query.anim_time-0.5)*360)*3", "Math.cos((query.anim_time-0.6)*180)*3", 0]
 					}
 				},
 				"armscore": {
 					"rotation": {
-						"vector": ["50+Math.cos((query.anim_time-0.1)*360)*10", 0, 0]
+						"vector": ["50+Math.cos((query.anim_time-0.2)*360)*-3", 0, 0]
 					}
 				},
 				"leftarm": {

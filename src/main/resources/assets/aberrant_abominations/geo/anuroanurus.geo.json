@@ -1,0 +1,99 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.anuroanurus",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 7,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bodycore",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "armscore",
+					"parent": "bodycore",
+					"pivot": [0, 4, -4]
+				},
+				{
+					"name": "leftarm",
+					"parent": "armscore",
+					"pivot": [-8, 4, -4],
+					"cubes": [
+						{"origin": [-19, 4, -8], "size": [12, 0, 17], "uv": [48, 17]}
+					]
+				},
+				{
+					"name": "leftarm2",
+					"parent": "leftarm",
+					"pivot": [-19, 4, -7],
+					"cubes": [
+						{"origin": [-43, 4, -8], "size": [24, 0, 17], "uv": [0, 17]}
+					]
+				},
+				{
+					"name": "rightarm",
+					"parent": "armscore",
+					"pivot": [8, 4, -4],
+					"cubes": [
+						{"origin": [7, 4, -8], "size": [12, 0, 17], "uv": [48, 0]}
+					]
+				},
+				{
+					"name": "rightarm2",
+					"parent": "rightarm",
+					"pivot": [19, 4, -7],
+					"cubes": [
+						{"origin": [19, 4, -8], "size": [24, 0, 17], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "torso",
+					"parent": "bodycore",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-8, 0, -8], "size": [16, 5, 16], "uv": [0, 34]}
+					]
+				},
+				{
+					"name": "cranium",
+					"parent": "torso",
+					"pivot": [0, 5, 8],
+					"cubes": [
+						{"origin": [-8, 5, -8], "size": [16, 3, 16], "uv": [48, 39]},
+						{"origin": [5, 6, -9], "size": [4, 4, 7], "uv": [37, 58]},
+						{"origin": [-9, 6, -9], "size": [4, 4, 7], "uv": [22, 55]}
+					]
+				},
+				{
+					"name": "legscore",
+					"parent": "torso",
+					"pivot": [0, 4, 7]
+				},
+				{
+					"name": "leftleg",
+					"parent": "legscore",
+					"pivot": [-8, 4, 7],
+					"cubes": [
+						{"origin": [-10, 0, 4], "size": [4, 6, 7], "uv": [0, 55]},
+						{"origin": [-13, 0.01, 0], "size": [7, 0, 11], "uv": [37, 34]}
+					]
+				},
+				{
+					"name": "rightleg",
+					"parent": "legscore",
+					"pivot": [8, 4, 7],
+					"cubes": [
+						{"origin": [6, 0, 4], "size": [4, 6, 7], "uv": [0, 55]},
+						{"origin": [6, 0.01, 0], "size": [7, 0, 11], "uv": [55, 58]}
+					]
+				}
+			]
+		}
+	]
+}

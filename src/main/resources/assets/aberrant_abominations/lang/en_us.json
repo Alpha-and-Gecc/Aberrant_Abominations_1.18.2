@@ -1,6 +1,4 @@
 {
-  "itemGroup.aberrant_abominations": "Abominations Found Here",
-
   "item.aberrant_abominations.null_dna": "Nulled Dna",
   "item.aberrant_abominations.majundost_flask": "Majundosteus DNA",
   "item.aberrant_abominations.anuroanurus_flask": "Anuroanurus DNA",
@@ -14,5 +12,11 @@
   "item.aberrant_abominations.beelzomari": "Raw Beelzomari",
   "item.aberrant_abominations.beelzomari_fried": "Fried Beelzomari",
   "item.aberrant_abominations.frogfrog_raw": "Raw Anuroanurus Leg",
-  "item.aberrant_abominations.frogfrog_cooked": "Cooked Anuroanurus Leg"
+  "item.aberrant_abominations.frogfrog_cooked": "Cooked Anuroanurus Leg",
+
+  "item.aberrant_abominations.majundosteus_spawn": "Majundosteus Spawn Egg",
+  "item.aberrant_abominations.anuroanurus_spawn": "Anuroanurus Spawn Egg",
+
+  "entity.aberrant_abominations.majundosteus": "Majundosteus",
+  "entity.aberrant_abominations.anuroanurus": "Anuroanurus"
 }

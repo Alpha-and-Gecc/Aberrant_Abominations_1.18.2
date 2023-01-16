@@ -1,8 +1,9 @@
 package com.alpha_and_gec.aberrant_abominations.inits.item;
 
 import com.alpha_and_gec.aberrant_abominations.Aberrant_Abominations;
-import net.minecraft.world.item.CreativeModeTab;
+import com.alpha_and_gec.aberrant_abominations.inits.entity.HybridEntities;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -35,6 +36,12 @@ public final class CustomItems {
     //^^ GEAR
 
     //^^ BUCKETS
+
+    public static final RegistryObject<Item> MAJUNDOSTEUS_SPAWN = ITEMS.register("majundosteus_spawn",
+            () -> new ForgeSpawnEggItem(HybridEntities.MAJUNDOSTEUS, 0X191b0f, 0X7a5c3e ,new Item.Properties().tab(Aberrant_Abominations.HYBRIDS)));
+    public static final RegistryObject<Item> ANUROANURUS_SPAWN = ITEMS.register("anuroanurus_spawn",
+            () -> new ForgeSpawnEggItem(HybridEntities.ANUROANURUS, 0Xa9775f, 0X3a2248 ,new Item.Properties().tab(Aberrant_Abominations.HYBRIDS)));
+    //^^ SPAWN EGGS
 
     public static final RegistryObject<Item> MAJUNDRAW = ITEMS.register("majundraw",
             () -> new Item(new Item.Properties().food(FoodDefinition.MAJUNDRAW).tab(Aberrant_Abominations.HYBRIDS)));
