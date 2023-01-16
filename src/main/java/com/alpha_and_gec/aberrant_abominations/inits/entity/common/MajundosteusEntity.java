@@ -1,6 +1,12 @@
 package com.alpha_and_gec.aberrant_abominations.inits.entity.common;
 
 import com.alpha_and_gec.aberrant_abominations.inits.entity.HybridEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,14 +31,21 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import java.util.EnumSet;
+import java.util.Optional;
 import java.util.UUID;
 
-public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMob{
+public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMob {
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private static final EntityDataAccessor<Boolean> HAS_TARGET = SynchedEntityData.defineId(MajundosteusEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FEEDING = SynchedEntityData.defineId(MajundosteusEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> FEEDING_TIME = SynchedEntityData.defineId(MajundosteusEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Optional<BlockPos>> FEEDING_POS = SynchedEntityData.defineId(MajundosteusEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private UUID persistentAngerTarget;
     private int remainingPersistentAngerTime;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+    public float feedcooldown;
+    public float lastfeedcooldown;
 
     public boolean canBreatheUnderwater() {
         return true;
@@ -40,6 +53,8 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
 
     public MajundosteusEntity(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
+        this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.WALKABLE, 0.0F);
         this.maxUpStep = 1.0f;
     }
 
@@ -55,20 +70,28 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new TryFindWaterGoal(this));
-        this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1.1));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
-        //this.goalSelector.addGoal(4, new EatBlockGoal(this, 1.1));
-        this.targetSelector.addGoal(0, (new HurtByTargetGoal(this)));
-        this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
+        this.goalSelector.addGoal(0, new TryFindWaterGoal(this));
+
+        this.goalSelector.addGoal(1, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(1, new RandomSwimmingGoal(this, 1.0D, 10));
+        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.1));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0f));
+        this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, true));
+        this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)));
+        this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
     }
     //TODO: figure out how goal priority works
     //TODO: make it so that majundost tries to find water
     //TODO: make majundost only able to breath water
 
+    public void travel(Vec3 travelVector) {
+        if (this.isEffectiveAi() && this.isInWater()) {
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+        } else {
+            super.travel(travelVector);
+        }
+    }
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
@@ -106,17 +129,15 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (!event.isMoving()||this.isDescending()) {
+        if (!event.isMoving() || this.isDescending()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.idle", true));
-            return PlayState.CONTINUE;
-        } else if (this.isInWater() && event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.waterwalk", true));
-            return PlayState.CONTINUE;
-        } else if (!this.isInWater() && event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.walk", true));
-            return PlayState.CONTINUE;
+        } else {
+            if (this.isUnderWater()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.waterwalk", true));
+            } else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.walk", true));
+            }
         }
-
         return PlayState.CONTINUE;
     }
 
@@ -126,4 +147,78 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
         AnimationController<MajundosteusEntity> controller = new AnimationController<>(this, "controller", 5, this::predicate);
         data.addAnimationController(controller);
     }
+
+    /*
+    private class TrackUsedBlock extends Goal {
+
+        private final int searchLength;
+        private final int verticalSearchRange;
+        protected BlockPos destinationBlock;
+        private MajundosteusEntity majundost;
+        private int runDelay = 70;
+        private int maxFeedTime = 200;
+        private static final int MAX_TRAVELLING_TICKS = 600;
+
+        private boolean edible(Level world, BlockPos.MutableBlockPos pos) {
+            return world.getBlockState(pos).is();
+        }
+        int travellingTicks = MajundosteusEntity.this.level.random.nextInt(10);
+
+        TrackUsedBlock() {
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+        }
+
+        public boolean canContinueToUse() {
+            return destinationBlock != null && isMossBlock(pupfish.level, destinationBlock.mutable()) && isCloseToMoss(16);
+        }
+
+        public boolean isCloseToMoss(double dist) {
+            return destinationBlock == null || pupfish.distanceToSqr(Vec3.atCenterOf(destinationBlock)) < dist * dist;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!Mob.isInWaterOrBubble()) {
+                return false;
+            }
+            if (this.runDelay > 0) {
+                --this.runDelay;
+                return false;
+            } else {
+                this.runDelay = 200 + MajundosteusEntity.random.nextInt(150);
+                return this.searchForDestination();
+            }
+        }
+
+        public void start() {
+            this.travellingTicks = 0;
+            super.start();
+        }
+
+        public void stop() {
+            this.travellingTicks = 0;
+            MajundosteusEntity.this.navigation.stop();
+            MajundosteusEntity.this.navigation.resetMaxVisitedNodesMultiplier();
+        }
+
+        public void tick() {
+            if (Bee.this.savedFlowerPos != null) {
+                ++this.travellingTicks;
+                if (this.travellingTicks > this.adjustedTickDelay(600)) {
+                    Bee.this.savedFlowerPos = null;
+                } else if (!Bee.this.navigation.isInProgress()) {
+                    if (Bee.this.isTooFarAway(Bee.this.savedFlowerPos)) {
+                        Bee.this.savedFlowerPos = null;
+                    } else {
+                        Bee.this.pathfindRandomlyTowards(Bee.this.savedFlowerPos);
+                    }
+                }
+            }
+        }
+
+        private boolean wantsToGoToKnownFlower() {
+            return Bee.this.ticksWithoutNectarSinceExitingHive > 2400;
+        }
+}
+*/
 }
