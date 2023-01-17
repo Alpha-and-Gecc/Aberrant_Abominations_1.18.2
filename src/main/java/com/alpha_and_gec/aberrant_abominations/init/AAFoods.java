@@ -1,5 +1,7 @@
 package com.alpha_and_gec.aberrant_abominations.init;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 public class AAFoods {
 
@@ -9,7 +11,7 @@ public class AAFoods {
     public static final FoodProperties BEELZOMARI = new FoodProperties.Builder().nutrition(3).saturationMod(0.1F).meat().build();
     public static final FoodProperties BEELZOMARI_FRIED = new FoodProperties.Builder().nutrition(8).saturationMod(.6F).meat().fast().build();
 
-    public static final FoodProperties FROGFROG_RAW = new FoodProperties.Builder().nutrition(2).saturationMod(0.4F).meat().build();
+    public static final FoodProperties FROGFROG_RAW = new FoodProperties.Builder().nutrition(2).saturationMod(0.4F).meat().effect(new MobEffectInstance(MobEffects.CONFUSION), 50).build();
     public static final FoodProperties FROGFROG_COOKED = new FoodProperties.Builder().nutrition(4).saturationMod(.8F).meat().build();
 
 }

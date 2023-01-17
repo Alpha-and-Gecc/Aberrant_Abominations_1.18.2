@@ -1,11 +1,18 @@
 package com.alpha_and_gec.aberrant_abominations.common.entity.common;
 
 import com.alpha_and_gec.aberrant_abominations.init.AAEntities;
+import com.mojang.blaze3d.shaders.Effect;
+import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -35,6 +42,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -88,7 +96,7 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
         this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(2, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(4, new FindItemsGoal());
+        this.goalSelector.addGoal(3, new FindItemsGoal());
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
     }
@@ -98,7 +106,8 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
 
     public void travel(Vec3 travelVector) {
         if (this.isEffectiveAi() && this.isInWater()) {
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+            this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200));
+            this.AttributeModifier.Operation.MULTIPLY_TOTAL
         } else {
             super.travel(travelVector);
         }
@@ -140,10 +149,6 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (!eatingItem.isEmpty()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.dig", ILoopType.EDefaultLoopTypes.LOOP));
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.chew", ILoopType.EDefaultLoopTypes.LOOP));
-        }
         if (!event.isMoving() || this.isDescending()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.idle", ILoopType.EDefaultLoopTypes.LOOP));
         } else {
@@ -153,6 +158,17 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.walk", ILoopType.EDefaultLoopTypes.LOOP));
             }
         }
+
+        if (this.isAggressive() && isAlive() && isInWater()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.bite", true));
+            return PlayState.CONTINUE;
+        }
+
+        if (!this.eatingItem.isEmpty()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.chew", false));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.majundosteus.chew", false));
+        }
+
         return PlayState.CONTINUE;
     }
 
@@ -301,75 +317,5 @@ public class MajundosteusEntity extends Animal implements IAnimatable, NeutralMo
         }
     }
 
-/*    private class TrackUsedBlock extends Goal {
 
-        private final int searchLength;
-        private final int verticalSearchRange;
-        protected BlockPos destinationBlock;
-        private MajundosteusEntity majundost;
-        private int runDelay = 70;
-        private int maxFeedTime = 200;
-        private static final int MAX_TRAVELLING_TICKS = 600;
-
-        private boolean edible(Level world, BlockPos.MutableBlockPos pos) {
-            return world.getBlockState(pos).is();
-        }
-        int travellingTicks = MajundosteusEntity.this.level.random.nextInt(10);
-
-        TrackUsedBlock() {
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-        }
-
-        public boolean canContinueToUse() {
-            return destinationBlock != null && isMossBlock(pupfish.level, destinationBlock.mutable()) && isCloseToMoss(16);
-        }
-
-        public boolean isCloseToMoss(double dist) {
-            return destinationBlock == null || pupfish.distanceToSqr(Vec3.atCenterOf(destinationBlock)) < dist * dist;
-        }
-
-        @Override
-        public boolean canUse() {
-            if (!Mob.isInWaterOrBubble()) {
-                return false;
-            }
-            if (this.runDelay > 0) {
-                --this.runDelay;
-                return false;
-            } else {
-                this.runDelay = 200 + MajundosteusEntity.random.nextInt(150);
-                return this.searchForDestination();
-            }
-        }
-
-        public void start() {
-            this.travellingTicks = 0;
-            super.start();
-        }
-
-        public void stop() {
-            this.travellingTicks = 0;
-            MajundosteusEntity.this.navigation.stop();
-            MajundosteusEntity.this.navigation.resetMaxVisitedNodesMultiplier();
-        }
-
-        public void tick() {
-            if (Bee.this.savedFlowerPos != null) {
-                ++this.travellingTicks;
-                if (this.travellingTicks > this.adjustedTickDelay(600)) {
-                    Bee.this.savedFlowerPos = null;
-                } else if (!Bee.this.navigation.isInProgress()) {
-                    if (Bee.this.isTooFarAway(Bee.this.savedFlowerPos)) {
-                        Bee.this.savedFlowerPos = null;
-                    } else {
-                        Bee.this.pathfindRandomlyTowards(Bee.this.savedFlowerPos);
-                    }
-                }
-            }
-        }
-
-        private boolean wantsToGoToKnownFlower() {
-            return Bee.this.ticksWithoutNectarSinceExitingHive > 2400;
-        }
-    }*/
 }
