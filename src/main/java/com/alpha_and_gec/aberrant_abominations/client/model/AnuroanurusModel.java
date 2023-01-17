@@ -1,11 +1,9 @@
-package com.alpha_and_gec.aberrant_abominations.inits.entity.client;
+package com.alpha_and_gec.aberrant_abominations.client.model;
 
-import com.alpha_and_gec.aberrant_abominations.Aberrant_Abominations;
-import com.alpha_and_gec.aberrant_abominations.inits.entity.common.AnuroanurusEntity;
-import com.alpha_and_gec.aberrant_abominations.inits.entity.common.MajundosteusEntity;
+import com.alpha_and_gec.aberrant_abominations.AberrantAbominations;
+import com.alpha_and_gec.aberrant_abominations.common.entity.common.AnuroanurusEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
@@ -25,17 +23,17 @@ public class AnuroanurusModel extends AnimatedGeoModel<AnuroanurusEntity> {
     }
     @Override
     public ResourceLocation getModelLocation(AnuroanurusEntity object) {
-        return new ResourceLocation(Aberrant_Abominations.MODID, "geo/anuroanurus.geo.json");
+        return new ResourceLocation(AberrantAbominations.MODID, "geo/anuroanurus.geo.json");
     }
 
     @Override
     public ResourceLocation getTextureLocation(AnuroanurusEntity object) {
-        return new ResourceLocation(Aberrant_Abominations.MODID, "textures/entity/anuroanurus.png");
+        return new ResourceLocation(AberrantAbominations.MODID, "textures/entity/anuroanurus.png");
     }
 
     @Override
     public ResourceLocation getAnimationFileLocation(AnuroanurusEntity object) {
-        return new ResourceLocation(Aberrant_Abominations.MODID, "animations/anuroanurus.animation.json");
+        return new ResourceLocation(AberrantAbominations.MODID, "animations/anuroanurus.animation.json");
     }
 
 }

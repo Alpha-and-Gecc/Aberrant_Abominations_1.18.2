@@ -18,5 +18,7 @@
   "item.aberrant_abominations.anuroanurus_spawn": "Anuroanurus Spawn Egg",
 
   "entity.aberrant_abominations.majundosteus": "Majundosteus",
-  "entity.aberrant_abominations.anuroanurus": "Anuroanurus"
+  "entity.aberrant_abominations.anuroanurus": "Anuroanurus",
+
+  "itemGroup.aberrant_abominations": "Aberrant Abominations"
 }

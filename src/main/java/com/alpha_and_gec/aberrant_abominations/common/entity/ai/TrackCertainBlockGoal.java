@@ -1,10 +1,4 @@
-package com.alpha_and_gec.aberrant_abominations.inits.entity.ai;
-
-import com.alpha_and_gec.aberrant_abominations.inits.entity.common.MajundosteusEntity;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.Bee;
-import java.util.EnumSet;
+package com.alpha_and_gec.aberrant_abominations.common.entity.ai;
 
 
 public class TrackCertainBlockGoal {

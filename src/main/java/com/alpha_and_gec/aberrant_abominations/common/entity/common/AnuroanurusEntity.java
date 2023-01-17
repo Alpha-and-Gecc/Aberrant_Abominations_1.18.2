@@ -1,11 +1,10 @@
-package com.alpha_and_gec.aberrant_abominations.inits.entity.common;
+package com.alpha_and_gec.aberrant_abominations.common.entity.common;
 
-import com.alpha_and_gec.aberrant_abominations.inits.entity.HybridEntities;
+import com.alpha_and_gec.aberrant_abominations.init.AAEntities;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.AgeableMob;
@@ -22,11 +21,8 @@ import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -128,7 +124,7 @@ public class AnuroanurusEntity extends Animal implements IAnimatable, NeutralMob
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return HybridEntities.MAJUNDOSTEUS.get().create(serverLevel);
+        return AAEntities.MAJUNDOSTEUS.get().create(serverLevel);
     }
 
     @Override
